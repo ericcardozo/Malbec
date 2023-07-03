@@ -1,5 +1,14 @@
-#ifndef TENSOR_REFERENCE_HPP
-#define TENSOR_REFERENCE_HPP
+/********************************************************************************
+
+This class is a wrapper for the expression class. Because the expression class
+is a base for polymorphic expressions, and we want to be able to pass around
+expressions by value, we need a wrapper class to hold the pointer to the
+expression.
+
+*********************************************************************************/
+
+#ifndef INTERNAL_TENSOR_REFERENCE_HPP
+#define INTERNAL_TENSOR_REFERENCE_HPP
 
 #include "tensor_expression.hpp"
 

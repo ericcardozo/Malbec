@@ -5,21 +5,35 @@
 #include <memory>
 #include <vector>
 
-#include "tensor_body.hpp"
-#include "tensor_buffer.hpp"
-#include "tensor_reference.hpp"
-#include "tensor_expression.hpp"
+#include "tensor-core/tensor_body.hpp"
+#include "tensor-core/tensor_buffer.hpp"
+#include "tensor-core/tensor_reference.hpp"
+#include "tensor-core/tensor_expression.hpp"
 
 class Tensor : public Internal::Tensor::Body {
     public:
     using self = Tensor;
     using buffer = Internal::Tensor::Buffer<scalar>;
 
-    Tensor(shape_type shape) : Body(shape) {}
+    using Reference = Internal::Tensor::Reference;
+    using Expression = Internal::Tensor::Expression;
+
+    Tensor(shape_type shape) : Body(shape) { data_ptr = std::make_shared<buffer>(size()); }
+    Tensor(const std::vector<float> v, shape_type shape) : Body(shape) {
+        data_ptr = std::make_shared<buffer>(v.data(), size());
+    }
 
 
-    private:
-    std::shared_ptr<buffer> data_;
+    void print() {
+        std::cout << "Tensor of shape: ";
+        for(size_type dimension : shape()) std::cout << dimension << " ";
+        std::cout << std::endl;
+
+        for(size_type i = 0; i < size(); i++) {
+            std::cout << data()[i] << " ";
+        }
+        std::cout << std::endl;
+    }
 };
 
 
