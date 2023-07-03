@@ -1,31 +1,26 @@
 #ifndef TENSOR_HPP
 #define TENSOR_HPP
 
-#include "./tensor_expression.hpp"
+#include <iostream>
+#include <memory>
+#include <vector>
 
-class Tensor : public Internal::Expression {
+#include "tensor_body.hpp"
+#include "tensor_buffer.hpp"
+#include "tensor_reference.hpp"
+#include "tensor_expression.hpp"
+
+class Tensor : public Internal::Tensor::Body {
     public:
+    using self = Tensor;
+    using buffer = Internal::Tensor::Buffer<scalar>;
 
-    shape_type shape() const { return shape_; }
-    size_type rank() const { return shape_.size(); }
-    pointer data() const { return buffer_ptr->data(); }
-    size_type size() const { return buffer_ptr->size(); }
+    Tensor(shape_type shape) : Body(shape) {}
 
-    Internal::Expression* downcast() {
-        return this;
-    }
 
-    Tensor(pointer data_ptr, shape_type shape)
-    :   Expression(data_ptr, shape)
-    {}
-
-    ~Tensor() override = default;
-
-    void backward(Internal::Expression* gradient) override {
-        return;
-    }
-
-    
+    private:
+    std::shared_ptr<buffer> data_;
 };
+
 
 #endif // TENSOR_HPP
