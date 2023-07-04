@@ -13,17 +13,19 @@
 class Tensor : public Internal::Tensor::Body {
     public:
     using self = Tensor;
-    using buffer = Internal::Tensor::Buffer<scalar>;
 
     using Reference = Internal::Tensor::Reference;
     using Expression = Internal::Tensor::Expression;
 
-    Tensor(shape_type shape) : Body(shape) { data_ptr = std::make_shared<buffer>(size()); }
-    Tensor(const std::vector<float> v, shape_type shape) : Body(shape) {
-        data_ptr = std::make_shared<buffer>(v.data(), size());
+    Tensor(shape_type shape) : Body(shape) {
+        data_ptr = std::make_shared<buffer>(size());
     }
 
-
+    template <class Iterable>
+    Tensor(Iterable begin, Iterable end, shape_type shape) : Body(shape) {
+        data_ptr = std::make_shared<buffer>(begin, end);
+    }
+    
     void print() {
         std::cout << "Tensor of shape: ";
         for(size_type dimension : shape()) std::cout << dimension << " ";
@@ -35,6 +37,5 @@ class Tensor : public Internal::Tensor::Body {
         std::cout << std::endl;
     }
 };
-
 
 #endif // TENSOR_HPP

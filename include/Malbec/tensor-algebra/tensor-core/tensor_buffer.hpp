@@ -5,8 +5,7 @@ for storing the data of expressions.
 
 Why don't just use std::vector? because sometimes i want to make experiments
 with the memory layout of the tensor, for example making the destructor of the
-buffer class virtual for making a polymorphic buffer, or adding custom methods for
-allocating and deallocating memory, etc.
+buffer class virtual for making a polymorphic buffer, or adding custom methods, etc.
 
 Also I don't think it is a bad idea to spend a few hours learning about memory
 management in C++. RAII and iterators are important concepts to know.
@@ -18,6 +17,7 @@ management in C++. RAII and iterators are important concepts to know.
 
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 #include "iterator.hpp"
 
@@ -37,7 +37,10 @@ class Buffer {
     using const_iterator = ConstIterator<self>;
 
     Buffer(size_type size) { allocate(size); }
-    Buffer(const_pointer data, size_type size) : Buffer(size) { std::copy(data, data + size, data_); }
+
+    template <class Iterable>
+    Buffer(Iterable begin, Iterable end) : Buffer(std::distance(begin, end))
+    {   std::copy(begin, end, data_);   }
 
     Buffer(const Buffer& other) { copy(other); }
     Buffer(Buffer&& other) noexcept { move(other); }
@@ -57,7 +60,10 @@ class Buffer {
     pointer data() const { return data_; }
     size_type size() const { return size_; }
 
-    protected: 
+    template<class Iterable>
+    void assign(Iterable begin, Iterable end) {
+        std::copy(begin, end, data_);
+    }
 
     void allocate(size_type size) {
         delete[] data_;

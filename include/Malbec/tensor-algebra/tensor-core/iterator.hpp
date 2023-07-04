@@ -7,6 +7,7 @@ for the custom buffer.
 #define INTERNAL_ITERATOR_HPP
 
 #include <iostream>
+#include <concepts>
 
 namespace Internal {
 
@@ -19,6 +20,8 @@ class Iterator {
     using size_type = typename Buffer::size_type;
     using reference = typename Buffer::reference;
     using pointer = typename Buffer::pointer;
+    using const_reference = typename Buffer::const_reference;
+    using const_pointer = typename Buffer::const_pointer;
     using difference_type = std::ptrdiff_t;
 
     Iterator(pointer address) : address_(address) {}
@@ -57,13 +60,14 @@ class ConstIterator {
     using self = ConstIterator<Buffer>;
     using value_type = typename Buffer::value_type;
     using size_type = typename Buffer::size_type;
+    using reference = typename Buffer::reference;
+    using pointer = typename Buffer::pointer;
     using const_reference = typename Buffer::const_reference;
     using const_pointer = typename Buffer::const_pointer;
     using difference_type = std::ptrdiff_t;
 
     ConstIterator(const_pointer address) : address_(address) {}
-    ConstIterator(const Iterator<Buffer>& other) : address_(other.address_) {}
-
+    
     self& operator = (const Iterator<Buffer>& other) { address_ = other.address_; return *this; }
 
     self& operator ++() { ++address_; return *this; }

@@ -33,7 +33,7 @@ namespace Internal::Tensor {
 class Expression : public Body {
     public:
     using self = Expression;
-    using buffer = Buffer<scalar>;
+    using buffer = std::vector<scalar>;
 
     virtual ~Expression() = default;
     virtual void backward(Expression* gradient) = 0;
