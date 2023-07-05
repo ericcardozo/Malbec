@@ -1,14 +1,16 @@
-#ifndef PARAMETER_HPP
-#define PARAMETER_HPP
+#ifndef PARAMETERS_HPP
+#define PARAMETERS_HPP
 
 #include <iostream>
-#include <map>
+#include <memory>
 #include <vector>
+#include <map>
 
-#include "./tensor.hpp"
-#include "../statistics/distributions/distribution.hpp"
-#include "../statistics/distributions/normal.hpp"
-#include "../statistics/distributions/zeros.hpp"
+#include "tensor_base.hpp"
+
+#include "../statistics/distributions.hpp"
+
+namespace ml {
 
 enum class Initializer {
     He,
@@ -16,12 +18,14 @@ enum class Initializer {
     Zeros
 };
 
-class Parameter : public Tensor {
-    public:    
+class Parameter : public Internal::Tensor::Base {
+    public:
+
+    ~Parameter() override = default;
+
     std::map<Initializer, std::unique_ptr<Distribution::Distribution>> initializers_map;
-    Parameter(shape_type shape)
-    :   Tensor(shape)   
-    {
+    
+    Parameter(shape_type shape) : Base(shape) {
         initializers_map[Initializer::He] = std::make_unique<Distribution::Normal>(0, 1);
         initializers_map[Initializer::Xavier] = std::make_unique<Distribution::Normal>(0, 2);
         initializers_map[Initializer::Zeros] = std::make_unique<Distribution::Zeros>();
@@ -30,12 +34,15 @@ class Parameter : public Tensor {
     void initialize(Initializer initializer) {
         auto iterator = initializers_map.find(initializer);
         distribution_ = std::move(iterator->second);
-        std::vector<float> data = distribution_->generate(size());
+        std::vector<scalar> data = distribution_->generate(size());
         std::move(std::make_move_iterator(data.begin()), std::make_move_iterator(data.end()), begin());
     }
 
     private:
     std::unique_ptr<Distribution::Distribution> distribution_;
+    void backward(Expression* gradient) override {return;} // aca meto optim
 };
 
-#endif // PARAMETER_HPP
+} // namespace ml
+
+#endif
