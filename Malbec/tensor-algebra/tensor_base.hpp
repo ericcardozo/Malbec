@@ -6,20 +6,21 @@
 #include <vector>
 
 #include "tensor_body.hpp"
-#include "tensor_expression.hpp"
+#include "expression.hpp"
 
 namespace Internal::Tensor {
 
-class Base : public Expression {
+class Base {
     public:
     using scalar = float;
+    using pointer = scalar *;
     using self = Base;
 
     using storage_type = std::vector<scalar>;
     using iterator = typename storage_type::iterator;
     using const_iterator = typename storage_type::const_iterator;
 
-    using body_type = Internal::Body;
+    using body_type = Internal::Tensor::Body;
     using size_type = typename body_type::size_type;
     using shape_type = typename body_type::shape_type;
 
@@ -34,7 +35,7 @@ class Base : public Expression {
 
     Base(shape_type shape)
     : _body(shape)
-    , _data(_body.flat(shape))
+    , _data(Body::flatten(shape))
     {}
 
     template<class Iterable>
@@ -45,9 +46,10 @@ class Base : public Expression {
 
     virtual ~Base() = default;
 
-    size_type size() const { return _body.size; }
-    size_type rank() const { return _body.rank; }
-    shape_type shape() const { return _body.shape; }
+    size_type size() const { return _body.size(); }
+    size_type rank() const { return _body.rank(); }
+    shape_type shape() const { return _body.shape(); }
+    pointer data() { return _data.data(); }
 
     void reshape(shape_type shape) { _body = body_type(shape); }
 

@@ -5,7 +5,7 @@
 #include <vector>
 #include <forward_list>
 
-#include "tensor_expression.hpp"
+#include "expression.hpp"
 
 namespace Internal {
 

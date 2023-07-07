@@ -7,7 +7,6 @@
 #include <map>
 
 #include "tensor_base.hpp"
-
 #include "../statistics/distributions.hpp"
 
 namespace ml {
@@ -40,7 +39,6 @@ class Parameter : public Internal::Tensor::Base {
 
     private:
     std::unique_ptr<Distribution::Distribution> distribution_;
-    void backward(Expression* gradient) override {return;} // aca meto optim
 };
 
 } // namespace ml
